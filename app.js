@@ -9,6 +9,7 @@ const searchInput = document.getElementById('search-input');
 const filterStatus = document.getElementById('filter-status');
 
 async function fetchRooms() {
+    // Явно указываем таблицу rooms
     let query = supabase.from('rooms').select('*').order('room_number', { ascending: true });
 
     const searchValue = searchInput.value.trim();
@@ -25,14 +26,14 @@ async function fetchRooms() {
     const { data: rooms, error } = await query;
 
     if (error) {
-        roomsGrid.innerHTML = `<p style="color:red;">Ошибка загрузки: ${error.message}</p>`;
+        roomsGrid.innerHTML = `<p style="color:red; text-align:center;">🔴 Ошибка Supabase: ${error.message} (Код: ${error.code})</p>`;
         return;
     }
 
     roomsGrid.innerHTML = '';
 
-    if (rooms.length === 0) {
-        roomsGrid.innerHTML = '<p>Номера не найдены.</p>';
+    if (!rooms || rooms.length === 0) {
+        roomsGrid.innerHTML = '<p class="loading">Номера не найдены в базе данных.</p>';
         return;
     }
 
@@ -42,7 +43,6 @@ async function fetchRooms() {
         
         const statusClass = room.status.toLowerCase().replace(/\s+/g, '-');
 
-        // Выводим цену в тенге (₸)
         card.innerHTML = `
             <span class="room-badge status-${statusClass}">${room.status}</span>
             <h3>Номер ${room.room_number}</h3>
