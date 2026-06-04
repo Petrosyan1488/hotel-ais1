@@ -42,11 +42,12 @@ async function fetchRooms() {
         
         const statusClass = room.status.toLowerCase().replace(/\s+/g, '-');
 
+        // Выводим цену в тенге (₸)
         card.innerHTML = `
             <span class="room-badge status-${statusClass}">${room.status}</span>
             <h3>Номер ${room.room_number}</h3>
             <p><strong>Тип:</strong> ${room.type}</p>
-            <p><strong>Цена:</strong> ${room.price_per_night} руб./сутки</p>
+            <p><strong>Цена:</strong> ${room.price_per_night} ₸ / сутки</p>
             <p><em>${room.description || 'Описание отсутствует'}</em></p>
         `;
         roomsGrid.appendChild(card);
