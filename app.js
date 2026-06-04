@@ -1,7 +1,6 @@
 const SUPABASE_URL = "https://myratwuodgfzpmmnnzjt.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Ic-pUV5WjxAdXnijymzQTA_1IwRQ6Ss";
 
-// Исправленная инициализация
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const roomsGrid = document.getElementById('rooms-grid');
@@ -11,7 +10,7 @@ const filterStatus = document.getElementById('filter-status');
 const googleBtn = document.getElementById('google-login-btn');
 const adminPanel = document.getElementById('admin-panel');
 
-const ADMIN_EMAIL = "твоя_почта@gmail.com"; 
+const ADMIN_EMAIL = '240120@turan-edu.kz';
 
 async function checkUser() {
     const { data: { user } } = await supabaseClient.auth.getUser();
