@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>АИС Гостиница — Управление номерами</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>🏨 АИС «Гостиница» — Панель администратора</h1>
+    </header>
+
+    <main class="container">
+        <section class="form-section">
+            <h2>Добавить новый номер</h2>
+            <form id="room-form">
+                <input type="text" id="room_number" placeholder="Номер комнаты (например, 102)" required>
+                <select id="room_type" required>
+                    <option value="" disabled selected>Выберите тип</option>
+                    <option value="Стандарт">Стандарт</option>
+                    <option value="Люкс">Люкс</option>
+                    <option value="Апартаменты">Апартаменты</option>
+                </select>
+                <input type="number" id="room_price" placeholder="Цена за сутки (руб.)" required>
+                <select id="room_status" required>
+                    <option value="Свободен">Свободен</option>
+                    <option value="Занят">Занят</option>
+                    <option value="На уборке">На уборке</option>
+                </select>
+                <input type="text" id="room_desc" placeholder="Описание (удобства)">
+                <button type="submit" class="btn">Добавить номер</button>
+            </form>
+        </section>
+
+        <section class="filter-section">
+            <h2>Поиск и фильтрация</h2>
+            <div class="filters">
+                <input type="text" id="search-input" placeholder="Поиск по номеру комнаты...">
+                <select id="filter-status">
+                    <option value="all">Все статусы</option>
+                    <option value="Свободен">Свободен</option>
+                    <option value="Занят">Занят</option>
+                    <option value="На уборке">На уборке</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="list-section">
+            <h2>Список номеров отеля</h2>
+            <div id="rooms-grid" class="rooms-grid">
+                <p class="loading">Загрузка данных из Supabase...</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+</body>
+</html>
