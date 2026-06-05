@@ -115,11 +115,11 @@ if (roomForm) {
 
         // Забираем данные строго по ID из нашей HTML формы
         const roomData = {
-            room_number: document.getElementById('room-number').value,
-            type: document.getElementById('room-type').value,
-            price_per_night: parseFloat(document.getElementById('room-price').value),
-            status: document.getElementById('room-status').value,
-            description: document.getElementById('room-description').value
+            room_number: document.getElementById('room_number').value,
+            type: document.getElementById('room_type').value,
+            price_per_night: parseFloat(document.getElementById('room_price').value),
+            status: document.getElementById('room_status').value,
+            description: document.getElementById('room_desc').value
         };
 
         const { error } = await supabaseClient.from('rooms').insert([roomData]);
