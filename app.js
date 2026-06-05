@@ -35,10 +35,21 @@ async function checkUser() {
 if (googleBtn) {
     googleBtn.addEventListener('click', async () => {
         const { data: { user } } = await supabaseClient.auth.getUser();
-        
+
         if (user) {
             await supabaseClient.auth.signOut();
             window.location.reload();
+        } else {
+            const { error } = await supabaseClient.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin + window.location.pathname
+                }
+            });
+            if (error) console.error("Ошибка авторизации через Google:", error.message);
+        }
+    });
+}
         } else {
             const { error } = await supabaseClient.auth.signInWithOAuth({
                 provider: 'google',
