@@ -12,26 +12,31 @@ const adminPanel = document.getElementById('admin-panel');
 
 const ADMIN_EMAIL = '240120@turan-edu.kz';
 
+// 1. Проверка авторизации и показ/скрытие админки
 async function checkUser() {
     const { data: { user } } = await supabaseClient.auth.getUser();
 
     if (user) {
         if (googleBtn) {
             googleBtn.innerText = `Выйти (${user.email})`;
-            googleBtn.className = "btn";
+            googleBtn.className = "btn"; // Делаем кнопку обычной при выходе
         }
         if (adminPanel) {
-            adminPanel.style.display = (user.email === ADMIN_EMAIL) ? "block" : "none";
+            // Безопасная проверка почты в нижнем регистре
+            adminPanel.style.display = (user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) ? "block" : "none";
         }
     } else {
         if (googleBtn) {
             googleBtn.innerText = "Войти через Google";
-            googleBtn.className = "btn google-btn";
+            googleBtn.className = "btn google-btn"; // Возвращаем красный стиль
         }
-        if (adminPanel) adminPanel.style.display = "none";
+        if (adminPanel) {
+            adminPanel.style.display = "none";
+        }
     }
 }
 
+// 2. Обработчик клика: Вход / Выход
 if (googleBtn) {
     googleBtn.addEventListener('click', async () => {
         const { data: { user } } = await supabaseClient.auth.getUser();
@@ -50,16 +55,8 @@ if (googleBtn) {
         }
     });
 }
-        } else {
-            const { error } = await supabaseClient.auth.signInWithOAuth({
-                provider: 'google',
-                options: { redirectTo: window.location.href }
-            });
-            if (error) alert("Ошибка входа: " + error.message);
-        }
-    });
-}
 
+// 3. Получение комнат из базы данных
 async function fetchRooms() {
     let query = supabaseClient.from('rooms').select('*').order('room_number', { ascending: true });
 
@@ -77,10 +74,11 @@ async function fetchRooms() {
     const { data: rooms, error } = await query;
 
     if (error) {
-        roomsGrid.innerHTML = `<p style="color:red; text-align:center;">🔴 Ошибка: ${error.message}</p>`;
+        if (roomsGrid) roomsGrid.innerHTML = `<p style="color:red; text-align:center;">🔴 Ошибка: ${error.message}</p>`;
         return;
     }
 
+    if (!roomsGrid) return;
     roomsGrid.innerHTML = '';
 
     if (!rooms || rooms.length === 0) {
@@ -104,22 +102,24 @@ async function fetchRooms() {
     });
 }
 
+// 4. Отправка формы (Добавление номера админом)
 if (roomForm) {
     roomForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         const { data: { user } } = await supabaseClient.auth.getUser();
-        if (!user || user.email !== ADMIN_EMAIL) {
+        if (!user || user.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
             alert("У вас нет прав администратора!");
             return;
         }
 
+        // Забираем данные строго по ID из нашей HTML формы
         const roomData = {
-            room_number: document.getElementById('room_number').value,
-            type: document.getElementById('room_type').value,
-            price_per_night: parseFloat(document.getElementById('room_price').value),
-            status: document.getElementById('room_status').value,
-            description: document.getElementById('room_desc').value
+            room_number: document.getElementById('room-number').value,
+            type: document.getElementById('room-type').value,
+            price_per_night: parseFloat(document.getElementById('room-price').value),
+            status: document.getElementById('room-status').value,
+            description: document.getElementById('room-description').value
         };
 
         const { error } = await supabaseClient.from('rooms').insert([roomData]);
@@ -129,17 +129,15 @@ if (roomForm) {
         } else {
             alert('Номер успешно добавлен!');
             roomForm.reset();
-            fetchRooms();
+            fetchRooms(); // Перезагружаем список, чтобы увидеть новый номер
         }
     });
 }
 
+// 5. Навешивание слушателей событий фильтрации (по одному разу!)
 if (searchInput) searchInput.addEventListener('input', fetchRooms);
 if (filterStatus) filterStatus.addEventListener('change', fetchRooms);
 
+// 6. Запуск логики при старте страницы
 checkUser();
-fetchRooms();
-searchInput.addEventListener('input', fetchRooms);
-filterStatus.addEventListener('change', fetchRooms);
-
 fetchRooms();
